@@ -17,7 +17,7 @@ app.use(device.capture());
 app.use(
   cors({
     // origin: "http://localhost:3000", // React app URL
-    origin: "http://103.147.56.81:5002", // React app URL
+    origin: "http://103.147.56.81:5001", // React app URL
     credentials: true, // Allow cookies and credentials
   })
 );
