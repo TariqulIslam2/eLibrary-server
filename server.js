@@ -16,16 +16,16 @@ app.use(device.capture());
 // CORS configuration
 app.use(
   cors({
-    // origin: "http://localhost:3000", // React app URL
-    origin: "http://103.147.56.81:5001", // React app URL
+    origin: "http://localhost:3000", // React app URL
+    // origin: "http://103.147.56.81:5002", // React app URL
     credentials: true, // Allow cookies and credentials
   })
 );
 
 // Handle preflight requests
 app.options("*", (req, res) => {
-  // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Origin", "http://103.147.56.81:5002");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  // res.header("Access-Control-Allow-Origin", "http://103.147.56.81:5002");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -37,8 +37,8 @@ app.use(
   "/static/public/image/",
   express.static(path.join(__dirname, "public/image/"), {
     setHeaders: (res) => {
-      // res.set("Access-Control-Allow-Origin", "http://localhost:3000");
-      res.set("Access-Control-Allow-Origin", "http://103.147.56.81:5002");
+      res.set("Access-Control-Allow-Origin", "http://localhost:3000");
+      // res.set("Access-Control-Allow-Origin", "http://103.147.56.81:5002");
       res.set("Access-Control-Allow-Credentials", "true");
     },
   })

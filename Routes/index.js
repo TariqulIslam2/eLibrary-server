@@ -68,6 +68,10 @@ const {
   getLBSettingLimitSetting,
   postLBSettingLimitSetting,
   putLBSettingLimitSetting,
+  getAddBookInfo,
+  postAddBookInfo,
+  getAddBookInfoById,
+  putAddBookInfo,
 } = require("../Controllers");
 
 router.get("/usercreation", getUserCreation);
@@ -177,5 +181,11 @@ router.put("/librarysetting/membershipplan", putLBSettingMembershipPlan);
 router.get("/librarysetting/limitsetting", getLBSettingLimitSetting);
 router.post("/librarysetting/limitsetting", postLBSettingLimitSetting);
 router.put("/librarysetting/limitsetting", putLBSettingLimitSetting);
+
+// Book Info 
+router.get("/addbookinfo", getAddBookInfo);
+router.post("/addbookinfo", postAddBookInfo);
+router.get("/addbookinfo/byId/:id", getAddBookInfoById);
+router.put("/addbookinfo", putAddBookInfo);
 
 module.exports = router;

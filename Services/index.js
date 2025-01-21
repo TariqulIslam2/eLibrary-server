@@ -47,6 +47,13 @@ ORDER BY
     AUTHOR_ID DESC
 `);
 };
+module.exports.getAddBookInfoData = () => {
+  return Execute(`SELECT  * FROM 
+    VW_LIB_BOOKS_INFO 
+ORDER BY 
+    BOOK_ID DESC
+`);
+};
 module.exports.getDeshboardDataData = () => {
   return Execute(`SELECT * FROM VW_DASHBOARD_DETAILS`);
 };
@@ -149,6 +156,10 @@ ON EMP.DESIG_ID = DEG.DESIG_ID
 LEFT OUTER JOIN HRM_COMPANY_INFO CI
 ON EMP.COM_ID = CI.COM_ID
 WHERE EMP.EMPLOYEE_ID = ${id}`);
+};
+module.exports.getAddBookInfoByIdData = (id) => {
+  return Execute(`SELECT * FROM VW_LIB_BOOKS_INFO 
+WHERE BOOK_ID = ${id}`);
 };
 
 module.exports.getAuthorByIdData = (id) => {
@@ -457,6 +468,20 @@ module.exports.postLBSettingAuthorData = async (data, path) => {
      VALUES ('${data.AUTHOR_NAME}','${data.EMAIL}','${data.PHONE_NUMBER}','${data.COUNTRY}',TO_DATE('${data.DATE_OF_BIRTH}', 'YYYY-MM-DD'),'${data.WEBSITE}','${path}','${data.AWARDS}','${data.BIOGRAPHY}')`
   );
 };
+module.exports.postAddBookInfoData = async (data, path) => {
+  return Execute(
+    `INSERT INTO LIB_BOOKS_INFO ( TITLE,CATEGORY_ID,AUTHOR_ID,PUBLISHER_ID,ISBN,EDITION,LANGUAGE,PAGES,PUBLISHED_YEAR,COPIES,LOCATION,FORMAT,PRICE,DESCRIPTION,FILE_PATH)
+     VALUES ('${data.TITLE}',${parseInt(data.CATEGORY_ID)},${parseInt(
+      data.AUTHOR_ID
+    )},${parseInt(data.PUBLISHER_ID)},'${data.ISBN}','${data.EDITION}','${
+      data.LANGUAGE
+    }',${parseInt(data.PAGES)},${parseInt(data.PUBLISHED_YEAR)},${parseInt(
+      data.COPIES
+    )},'${data.LOCATION}','${data.FORMAT}',${parseInt(data.PRICE)},'${
+      data.DESCRIPTION
+    }','${path}')`
+  );
+};
 module.exports.putDepartmentData = async (data) => {
   return Execute(
     `UPDATE HRM_DEPARTMENT_INFO SET DEPT_NAME = '${data.DEPT_NAME}' WHERE DEPT_ID = ${data.DEPT_ID}`
@@ -589,6 +614,26 @@ module.exports.putEmployeeData = async (data) => {
     CONFIRMATION_DATE= TO_DATE('${data.CONFIRMATION_DATE}', 'YYYY-MM-DD'),
     DESIG_ID='${data.DESIG_ID}',
     DEPT_ID='${data.DEPT_ID}',PHOTO='${data.PHOTO}' WHERE EMPLOYEE_ID = ${data.EMPLOYEE_ID}`
+  );
+};
+module.exports.putAddBookInfoData = async (data) => {
+  return Execute(
+    `UPDATE LIB_BOOKS_INFO SET TITLE ='${data.TITLE}',
+    CATEGORY_ID=${data.CATEGORY_ID},
+    AUTHOR_ID=${data.AUTHOR_ID},
+    PUBLISHER_ID=${data.PUBLISHER_ID},
+    ISBN='${data.ISBN}',
+    EDITION='${data.EDITION}',
+    LANGUAGE='${data.LANGUAGE}',
+    PAGES=${data.PAGES},
+    PUBLISHED_YEAR=${data.PUBLISHED_YEAR},
+    COPIES=${data.COPIES},
+    PRICE=${data.PRICE},
+    LOCATION='${data.LOCATION}',
+    FORMAT='${data.FORMAT}',
+    DESCRIPTION='${data.DESCRIPTION}',
+    FILE_PATH='${data.FILE_PATH}'
+    WHERE BOOK_ID = ${data.BOOK_ID}`
   );
 };
 module.exports.puttLBSettingAuthorData = async (data) => {

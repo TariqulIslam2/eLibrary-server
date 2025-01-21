@@ -77,6 +77,10 @@ const {
   getLBSettingLimitSettingData,
   postLBSettingLimitSettingData,
   putLBSettingLimitSettingData,
+  getAddBookInfoData,
+  postAddBookInfoData,
+  getAddBookInfoByIdData,
+  putAddBookInfoData,
 } = require("../Services");
 const { createResponse } = require("../Utils/responseGenerate");
 const multer = require("multer");
@@ -175,6 +179,15 @@ module.exports.getLBSettingPublisher = async (req, res, next) => {
 module.exports.getLBSettingAuthor = async (req, res, next) => {
   try {
     const result = await getLBSettingAuthorData();
+
+    res.json(createResponse(result, "Data Successfully get", false));
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports.getAddBookInfo = async (req, res, next) => {
+  try {
+    const result = await getAddBookInfoData();
 
     res.json(createResponse(result, "Data Successfully get", false));
   } catch (err) {
@@ -575,6 +588,16 @@ module.exports.getEmployeeById = async (req, res, next) => {
     const { id } = req.params;
 
     const result = await getEmployeeByIdData(id);
+    res.json(createResponse(result, "Data Successfully get", false));
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports.getAddBookInfoById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const result = await getAddBookInfoByIdData(id);
     res.json(createResponse(result, "Data Successfully get", false));
   } catch (err) {
     next(err);
@@ -1063,6 +1086,29 @@ module.exports.postLBSettingAuthor = async (req, res, next) => {
     next(err);
   }
 };
+module.exports.postAddBookInfo = async (req, res, next) => {
+  try {
+    uploadFile_books(req, res, async function (err) {
+      if (err) {
+        console.error("File upload error:", err);
+        return res.status(400).json({ error: "File upload failed" });
+      }
+
+      console.log("Request Body:", req.body); // Log the body to debug
+      console.log("Uploaded File:", req.file); // Log the file to debug
+
+      const result = await postAddBookInfoData(
+        req.body,
+        req.file?.filename || null // Handle cases where file is optional
+      );
+
+      res.json(createResponse("Add Book Create Successful", false));
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    next(err);
+  }
+};
 
 module.exports.putEmployee = async (req, res, next) => {
   try {
@@ -1118,6 +1164,49 @@ module.exports.putEmployee = async (req, res, next) => {
     next(err);
   }
 };
+module.exports.putAddBookInfo = async (req, res, next) => {
+  try {
+    uploadFile_books(req, res, async function (err) {
+      const data = req.body;
+      const result1 = await getAddBookInfoByIdData(data.BOOK_ID);
+
+      const data1 = {
+        BOOK_ID: data.BOOK_ID,
+        TITLE: data.TITLE ? data.TITLE : result1[0].TITLE,
+        CATEGORY_ID: data.CATEGORY_ID
+          ? parseInt(data.CATEGORY_ID)
+          : result1[0].CATEGORY_ID,
+        AUTHOR_ID: data.AUTHOR_ID
+          ? parseInt(data.AUTHOR_ID)
+          : result1[0].AUTHOR_ID,
+        PUBLISHER_ID: data.PUBLISHER_ID
+          ? parseInt(data.PUBLISHER_ID)
+          : result1[0].PUBLISHER_ID,
+        PUBLISHED_YEAR: data.PUBLISHED_YEAR
+          ? data.PUBLISHED_YEAR
+          : result1[0].PUBLISHED_YEAR,
+        COPIES: data.COPIES ? data.COPIES : result1[0].NO_OF_COPIES,
+        ISBN: data.ISBN ? data.ISBN : result1[0].ISBN,
+        EDITION: data.EDITION ? data.EDITION : result1[0].EDITION,
+        LANGUAGE: data.LANGUAGE ? data.LANGUAGE : result1[0].LANGUAGE,
+        FILE_PATH: req?.file?.filename ? req?.file?.filename : result1[0].IMAGE,
+        PRICE: data.PRICE ? parseInt(data.PRICE) : result1[0].PRICE,
+        PAGES: data.PAGES ? parseInt(data.PAGES) : result1[0].PAGES,
+        LOCATION: data.LOCATION ? data.LOCATION : result1[0].LOCATION,
+        FORMAT: data.FORMAT ? data.FORMAT : result1[0].FORMAT,
+        DESCRIPTION: data.DESCRIPTION
+          ? data.DESCRIPTION
+          : result1[0].DESCRIPTION,
+      };
+      console.log(data1);
+      const result = await putAddBookInfoData(data1);
+      res.json(createResponse("book update Successful", false));
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports.putLBSettingAuthor = async (req, res, next) => {
   try {
     uploadFile_books(req, res, async function (err) {
