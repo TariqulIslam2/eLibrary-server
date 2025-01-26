@@ -1198,6 +1198,7 @@ module.exports.putAddBookInfo = async (req, res, next) => {
           ? data.DESCRIPTION
           : result1[0].DESCRIPTION,
       };
+      
       console.log(data1);
       const result = await putAddBookInfoData(data1);
       res.json(createResponse("book update Successful", false));
