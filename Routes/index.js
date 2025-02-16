@@ -72,6 +72,8 @@ const {
   postAddBookInfo,
   getAddBookInfoById,
   putAddBookInfo,
+  getAddBookDataInfo,
+  postAddBookRequest,
 } = require("../Controllers");
 
 router.get("/usercreation", getUserCreation);
@@ -187,5 +189,9 @@ router.get("/addbookinfo", getAddBookInfo);
 router.post("/addbookinfo", postAddBookInfo);
 router.get("/addbookinfo/byId/:id", getAddBookInfoById);
 router.put("/addbookinfo", putAddBookInfo);
+
+// book request 
+router.get("/addbookinfoData", getAddBookDataInfo);
+router.post("/addbookrequest", postAddBookRequest);
 
 module.exports = router;

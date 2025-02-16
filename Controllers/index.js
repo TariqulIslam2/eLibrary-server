@@ -81,6 +81,9 @@ const {
   postAddBookInfoData,
   getAddBookInfoByIdData,
   putAddBookInfoData,
+  getAddBookDataInfoData,
+  postAddBookRequestData,
+  postAddBookRequestLogData,
 } = require("../Services");
 const { createResponse } = require("../Utils/responseGenerate");
 const multer = require("multer");
@@ -188,6 +191,16 @@ module.exports.getLBSettingAuthor = async (req, res, next) => {
 module.exports.getAddBookInfo = async (req, res, next) => {
   try {
     const result = await getAddBookInfoData();
+
+    res.json(createResponse(result, "Data Successfully get", false));
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports.getAddBookDataInfo = async (req, res, next) => {
+  try {
+    const { categoryId } = req.query;
+    const result = await getAddBookDataInfoData(categoryId);
 
     res.json(createResponse(result, "Data Successfully get", false));
   } catch (err) {
@@ -808,6 +821,30 @@ module.exports.postLBSettingLimitSetting = async (req, res, next) => {
     next(err);
   }
 };
+module.exports.postAddBookRequest = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const result = await postAddBookRequestData(data);
+
+    if (result && result.outBinds && result.outBinds.id) {
+      const tranMstId = result.outBinds.id[0]; // Get the TRAN_MST_ID
+      // console.log("Returned TRAN_MST_ID:", tranMstId);
+      if (tranMstId) {
+        const result1 = await postAddBookRequestLogData(
+          parseInt(tranMstId),
+          data.USER_ID,
+          data.REMARKS,
+          "Pending"
+        );
+      }
+    } else {
+      console.log("No outBinds returned.");
+    }
+    res.json(createResponse("Book Request Create Successful", false));
+  } catch (err) {
+    next(err);
+  }
+};
 module.exports.postLBSettingPublisher = async (req, res, next) => {
   try {
     const data = req.body;
@@ -1198,7 +1235,7 @@ module.exports.putAddBookInfo = async (req, res, next) => {
           ? data.DESCRIPTION
           : result1[0].DESCRIPTION,
       };
-      
+
       console.log(data1);
       const result = await putAddBookInfoData(data1);
       res.json(createResponse("book update Successful", false));

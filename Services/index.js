@@ -162,6 +162,15 @@ module.exports.getAddBookInfoByIdData = (id) => {
 WHERE BOOK_ID = ${id}`);
 };
 
+module.exports.getAddBookDataInfoData = (categoryId) => {
+  if (categoryId) {
+    return Execute(`SELECT * FROM VW_LIB_BOOKS_INFO 
+WHERE CATEGORY_ID = ${categoryId}`);
+  } else {
+    return Execute(`SELECT * FROM VW_LIB_BOOKS_INFO`);
+  }
+};
+
 module.exports.getAuthorByIdData = (id) => {
   return Execute(`SELECT * FROM LIB_AUTHORS_INFO 
 WHERE AUTHOR_ID = ${id}`);
@@ -197,6 +206,18 @@ module.exports.postDocumentTypeData = async (data) => {
     `INSERT INTO DOA_DOCUMENT_TYPE (DOC_TYPE) VALUES ('${data.DOC_TYPE}')`
   );
 };
+module.exports.postAddBookRequestLogData = async (
+  id,
+  userid,
+  remark,
+  status
+) => {
+  return Execute(
+    `INSERT INTO LIB_REQUEST_LOG (REQUEST_ID,STATUS,UPDATED_BY,COMMENTS) VALUES (${parseInt(
+      id
+    )},'${status}',${parseInt(userid)},'${remark}')`
+  );
+};
 module.exports.postLBSettingCategoryData = async (data) => {
   return Execute(
     `INSERT INTO LIB_CATEGORIES_INFO (CATEGORY_NAME,GROUP_NAME,DESCRIPTION) VALUES ('${data.CATEGORY_NAME}','${data.GROUP_NAME}','${data.DESCRIPTION}')`
@@ -229,6 +250,19 @@ module.exports.postLBSettingLimitSettingData = async (data) => {
       data.REMINDER_BEFORE_DUE_DAYS
     )},${parseInt(data.PENALTY_PER_DAYS)},'${data.LIMIT_NAME}')`
   );
+};
+module.exports.postAddBookRequestData = async (data) => {
+  const sql = `INSERT INTO LIB_BOOK_REQUESTS (BOOK_ID,USER_ID,REMARKS) VALUES
+     (:BOOK_ID,:USER_ID,:REMARKS) RETURNING REQUEST_ID INTO :id`;
+
+  const binds = {
+    BOOK_ID: data.BOOK_ID ? parseInt(data.BOOK_ID) : null, // Convert to number or assign null
+    USER_ID: data.USER_ID ? parseInt(data.USER_ID) : null, // Convert to number or assign null
+    REMARKS: data.REMARKS || "", // Default to an empty string if undefined
+    id: { type: db.oracledb.NUMBER, dir: db.oracledb.BIND_OUT }, // Output bind
+  };
+
+  return ExecuteBind(sql, binds);
 };
 
 module.exports.postLBSettingPublisherData = async (data) => {
